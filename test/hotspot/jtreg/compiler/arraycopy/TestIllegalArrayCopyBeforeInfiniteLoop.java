@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2018, Red Hat, Inc. All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,32 +19,43 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-/*
+/**
  * @test
- * @summary Test that reference processing works with both parallel and non-parallel variants.
- * @requires vm.gc.Shenandoah
- *
- * @run main/othervm -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -Xmx1g -Xms1g                              TestParallelRefprocSanity
- * @run main/othervm -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -Xmx1g -Xms1g  -XX:-ParallelRefProcEnabled TestParallelRefprocSanity
- * @run main/othervm -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -Xmx1g -Xms1g  -XX:+ParallelRefProcEnabled TestParallelRefprocSanity
+ * @bug 8272131
+ * @requires vm.compiler2.enabled
+ * @summary ArrayCopy with negative index before infinite loop
+ * @run main/othervm -Xbatch -XX:-TieredCompilation
+ *                   -XX:CompileCommand=compileonly,"*TestIllegalArrayCopyBeforeInfiniteLoop::foo"
+ *                   compiler.arraycopy.TestIllegalArrayCopyBeforeInfiniteLoop
  */
 
-import java.lang.ref.*;
+package compiler.arraycopy;
 
-public class TestParallelRefprocSanity {
+import java.util.Arrays;
 
-    static final long TARGET_MB = Long.getLong("target", 10_000); // 10 Gb allocation
-
-    static volatile Object sink;
+public class TestIllegalArrayCopyBeforeInfiniteLoop {
+    private static char src[] = new char[10];
+    private static int count = 0;
+    private static final int iter = 10_000;
 
     public static void main(String[] args) throws Exception {
-        long count = TARGET_MB * 1024 * 1024 / 32;
-        for (long c = 0; c < count; c++) {
-            sink = new WeakReference<Object>(new Object());
+        for (int i = 0; i < iter; ++i) {
+            foo();
+        }
+        if (count != iter) {
+            throw new RuntimeException("test failed");
         }
     }
 
+    static void foo() {
+        try {
+            Arrays.copyOfRange(src, -1, 128);
+            do {
+            } while (true);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            count++;
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018, Red Hat, Inc. All rights reserved.
+ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,20 +19,32 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-/* @test
- * @summary test single worker threaded Shenandoah
- * @requires vm.gc.Shenandoah
- * @run main/othervm -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions
- *                   -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=aggressive
- *                   -XX:ParallelGCThreads=1 -XX:ConcGCThreads=1 TestSingleThreaded
+/*
+ * @test
+ * @bug 8271276
+ * @run main/othervm -Xbatch compiler.inlining.LateInlineVirtualNullReceiverCheck
  */
+package compiler.inlining;
 
-public class TestSingleThreaded {
+import java.util.regex.Pattern;
+
+public class LateInlineVirtualNullReceiverCheck {
+    static final Pattern pattern = Pattern.compile("");
+
+    public static void test(String s) {
+        pattern.matcher(s);
+    }
 
     public static void main(String[] args) {
-        // Bug should crash before we get here.
+        for (int i = 0; i < 10_000; ++i) {
+            try {
+                test(null);
+            } catch (NullPointerException npe) {
+                // ignore
+            }
+        }
+        System.out.println("TEST PASSED");
     }
 }

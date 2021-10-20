@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Red Hat, Inc. All rights reserved.
+ * Copyright (c) 2021, Alibaba Group Holding Limited. All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,38 +22,38 @@
  *
  */
 
-/* @test
- * @summary test C1 arraycopy intrinsic
- * @requires vm.gc.Shenandoah
- * @run main/othervm -XX:TieredStopAtLevel=1 -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=aggressive TestC1ArrayCopyNPE
+/*
+ * @test
+ * @bug 8271203
+ * @summary C2: assert(iff->Opcode() == Op_If || iff->Opcode() == Op_CountedLoopEnd || iff->Opcode() == Op_RangeCheck) failed: Check this code when new subtype is added
+ * @run main/othervm -Xbatch -XX:-TieredCompilation -XX:CompileOnly=compiler.c2.LongCountedLoopAsUnswitchIff::test compiler.c2.LongCountedLoopAsUnswitchIff
  */
 
-public class TestC1ArrayCopyNPE {
+package compiler.c2;
 
-    private static final int NUM_RUNS = 10000;
-    private static final int ARRAY_SIZE = 10000;
-    private static int[] a;
-    private static int[] b;
+public class LongCountedLoopAsUnswitchIff {
+    static int iArrFld[] = new int[400];
 
-    public static void main(String[] args) {
-        a = null;
-        b = new int[ARRAY_SIZE];
-        for (int i = 0; i < NUM_RUNS; i++) {
-            test();
-        }
-        a = new int[ARRAY_SIZE];
-        b = null;
-        for (int i = 0; i < NUM_RUNS; i++) {
+    public static void main(String[] strArr) {
+        for (int i = 0; i < 10; i++) {
             test();
         }
     }
 
-    private static void test() {
-        try {
-            System.arraycopy(a, 0, b, 0, ARRAY_SIZE);
-            throw new RuntimeException("test failed");
-        } catch (NullPointerException ex) {
-            // Ok
-        }
+    static void test() {
+        int i = 56, i2 = 22257;
+
+        do {
+            do {
+                int i24 = 1;
+                while (++i24 < 2) {
+                }
+                for (long l1 = i; l1 < 2; ++l1) {
+                    iArrFld[0] += 5;
+                }
+            } while ((i2 -= 2) > 0);
+            for (long l3 = 8; l3 < 194; ++l3) {
+            }
+        } while (--i > 0);
     }
 }
