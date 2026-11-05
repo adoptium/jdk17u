@@ -191,17 +191,6 @@
  */
 
 /*
- * @test id=entrustrootcag4
- * @bug 8243321
- * @summary Interoperability tests with Entrust CAs
- * @library /test/lib
- * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop entrustrootcag4 OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop entrustrootcag4 OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop entrustrootcag4 CRL
- */
-
-/*
  * @test id=godaddyrootg2ca
  * @bug 8196141
  * @summary Interoperability tests with GoDaddy CA
@@ -427,28 +416,6 @@
  */
 
 /*
- * @test id=emsignrootcag1
- * @bug 8319187
- * @summary Interoperability tests with eMudhra Root CA G1
- * @library /test/lib
- * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop emsignrootcag1 OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop emsignrootcag1 OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop emsignrootcag1 CRL
- */
-
-/*
- * @test id=emsigneccrootcag3
- * @bug 8319187
- * @summary Interoperability tests with eMudhra ECC Root CA G3
- * @library /test/lib
- * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop emsigneccrootcag3 OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop emsigneccrootcag3 OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop emsigneccrootcag3 CRL
- */
-
-/*
  * @test id=certainlyrootr1
  * @bug 8321408
  * @summary Interoperability tests with Certainly Root R1
@@ -636,9 +603,6 @@ public class CAInterop {
             case "entrustrootcaec1" ->
                     new CATestURLs("https://validec.entrust.net",
                             "https://revokedec.entrust.net");
-            case "entrustrootcag4" ->
-                    new CATestURLs("https://validg4.entrust.net",
-                            "https://revokedg4.entrust.net");
 
             case "godaddyrootg2ca" ->
                     new CATestURLs("https://valid.gdig2.catest.godaddy.com",
@@ -712,13 +676,6 @@ public class CAInterop {
             case "teliarootcav2" ->
                     new CATestURLs("https://juolukka.cover.telia.fi:10600",
                             "https://juolukka.cover.telia.fi:10601");
-
-            case "emsignrootcag1" ->
-                    new CATestURLs("https://testovg1.emsign.com/RootOVG1.html",
-                            "https://testovg1r.emsign.com/RootOVG1MR.html");
-            case "emsigneccrootcag3" ->
-                    new CATestURLs("https://testovg3.emsign.com/RootOVG3.html",
-                            "https://testovg3r.emsign.com/RootOVG3MR.html");
 
             case "certainlyrootr1" ->
                     new CATestURLs("https://valid.root-r1.certainly.com",
